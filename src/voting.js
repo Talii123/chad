@@ -38,9 +38,9 @@ VoteTable = React.createClass({
 				<thead>
 					<tr>
 						<td className="number" width="5%">#</td>
-						<td width="75%">Description</td>
-						<td className="number" width="10%">Votes Received</td>
-						<td className="number" width="10%">% of Votes Received</td>
+						<td width="69%">Description</td>
+						<td className="number" width="13%">Votes Received</td>
+						<td className="number" width="13%">% of Votes Received</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -65,8 +65,8 @@ VoteAdder = React.createClass({
 	}
 	, render: function() {
 		return (
-			<div>
-				<input onKeyUp={this.handleKeyPress} ref="ballotBox" />
+			<div className="voteControls">
+				<input onKeyUp={this.handleKeyPress} ref="ballotBox" type="text" />
 				<button onClick={this.handleVote}>Vote</button>
 			</div>
 		);
@@ -109,9 +109,9 @@ VoteTabulator = React.createClass({
 	, isValidVote: function(voteID, options) {
 		// since 0 is not a valid vote number, !voteID covers 0 and null
 		// remember we are 1-indexed
-		if (!isFinite(voteID) || !voteID || voteID > options.length) {
-			if (options.length == 1) {
-				this.setError('You can only vote for #1 until you add more choices.');	
+		if (!isFinite(voteID) || !voteID || voteID > options.length || options.length < 2) {
+			if (options.length < 2) {
+				this.setError('You cannot vote without first adding at least two choices');	
 			}
 			else {
 				this.setError('You need to enter a number from 1 to '+options.length);

@@ -42,6 +42,7 @@
     width: 150px;
     padding: 10px 10px 10px 0;
     text-align: center;
+    font-weight: bold;
   }
   .top.spacer {
     margin-top: 60px;
@@ -49,11 +50,47 @@
 
   .choiceUI {
     margin: 5px auto;
-    width: 70%;
+    width: 100%;
   }
+
+  .choiceUI > input[type="text"] {
+    font-size: 1.8em;
+    margin: 0 0.5em;
+    width: 40em;
+  }
+
+  .choiceUI > button {
+    font-size: 1.8em;
+    text-align: center;
+    width: 4em;
+  }  
 
   .choiceUI ol {
     padding-left: 0;
+    margin-left: 1.25em;
+    font-size: 1.8em;
+  }
+
+  .voteControls {
+      margin: 0 auto;
+      width: 20em;
+  }
+
+  .voteControls > button {
+    font-size: 1.8em;
+    text-align: center;
+    width: 4em;
+  }
+
+  .voteControls > input[type="text"] {
+    font-size: 1.8em;
+    margin: 0 0.5em 0 1em;
+    text-align: center;
+    width: 1.2em;
+  }
+
+  #voteContent table {
+    width: 100%;
   }
 
   .errorMsg {
