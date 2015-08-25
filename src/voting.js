@@ -29,8 +29,7 @@ VoteTable = React.createClass({
 						<VoteTableRow 
 							ballotOption={ballotOption}
 							key={ballotOption.ID}
-							votesCounted={votesCounted}
-						/>
+							votesCounted={votesCounted}/>
 					);
 				});
 
@@ -74,11 +73,20 @@ VoteAdder = React.createClass({
 	}
 });
 
+VoteErrorDisplay = React.createClass({
+	render: function() {
+		return (
+			<div className="errorMsg">{this.props.errorMsg}</div>
+		);
+	}
+})
+
 VoteTabulator = React.createClass({
 	getInitialState: function() {
 		return {
 			ballotOptions: this.choicesToBallotOptions(this.props.choices)
 			, votesCounted: 0
+			, errorMsg: ''
 		};
 	}
 	, choicesToBallotOptions: (function () {
@@ -93,11 +101,32 @@ VoteTabulator = React.createClass({
 			});
 		}
 	})()
+	, setError: function(msg) {
+		var nextState = this.state;
+		nextState.errorMsg = msg;
+		this.setState(nextState);
+	}
+	, isValidVote: function(voteID, options) {
+		// since 0 is not a valid vote number, !voteID covers 0 and null
+		// remember we are 1-indexed
+		if (!isFinite(voteID) || !voteID || voteID > options.length) {
+			if (options.length == 1) {
+				this.setError('You can only vote for #1 until you add more choices.');	
+			}
+			else {
+				this.setError('You need to enter a number from 1 to '+options.length);
+			}
+			return false;
+		}
+		return true;
+	}
 	, countVote: function(voteID) {
 		var index
 			, newIndex
 			, chosenOption
 			, options = this.state.ballotOptions;
+
+		if (!this.isValidVote(voteID, options)) return;
 
 		index = options.findIndex(function(option) {
 			return option.ID == voteID;
@@ -118,6 +147,7 @@ VoteTabulator = React.createClass({
 		this.setState({
 			ballotOptions: options
 			, votesCounted: this.state.votesCounted + 1
+			, errorMsg: ''
 		});
 	}
 	, onNewOptions: function(newOptions) {
@@ -125,11 +155,13 @@ VoteTabulator = React.createClass({
 		this.setState({
 			ballotOptions: this.state.ballotOptions.concat(newBallotOptions)
 			, votesCounted: this.state.votesCounted
+			, errorMsg: ''
 		});
 	}
 	, render: function() {
 		return (
 			<div>
+				<VoteErrorDisplay errorMsg={this.state.errorMsg} />
 				<VoteAdder onVote={this.countVote} />
 				<VoteTable ballotOptions={this.state.ballotOptions} votesCounted={this.state.votesCounted} />
 			</div>
