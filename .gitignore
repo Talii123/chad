@@ -44,3 +44,4 @@ build/
 war/WEB-INF/
 !war/WEB-INF/*.html
 !war/WEB-INF/*.jsp
+war/js/
