@@ -63,3 +63,7 @@ choiceUI = React.render(
 	<ChoiceUI choices={CHOICES} />,
 	document.getElementById('addChoicesContent')
 );
+
+topMenu.addTab("addChoicesContent", "Add Choices", function() {
+	choiceUI.refs.choiceText.getDOMNode().focus();
+});

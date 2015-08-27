@@ -4,7 +4,7 @@ var Tab = React.createClass({
 	}
 	, render: function() {
 		return (
-			<span className={(this.props.selectedTab == this.props.id) ? 'tab selected' : 'tab'}
+			<span className={(this.props.isSelected) ? 'tab selected' : 'tab'}
 				  onClick={this.clickHandler}>
 				{this.props.text}
 			</span>
@@ -13,36 +13,67 @@ var Tab = React.createClass({
 });
 var Menu = React.createClass({
 	getInitialState: function() {
-		var selectedTab = "addChoices"; //"vote"
-		document.getElementById(selectedTab + "Content").style.display = "block";
-		return {selectedTab: selectedTab};
+		return {
+			tabs: {}
+			, selectedTabID: null
+		};
 	}
-	, onTabSelected: function(tabID) {
-		var selectedTab = this.state.selectedTab;
-		if (tabID !== selectedTab) {
-			document.getElementById(selectedTab + "Content").style.display = "none";
-			document.getElementById(tabID + "Content").style.display = "block";
-			this.setState({selectedTab: tabID});	
+	, onTabSelected: function(nextSelectedTabID) {
+		var currentTabID = this.state.selectedTabID
+			, cb;
+
+		if (nextSelectedTabID !== currentTabID) {
+			document.getElementById(currentTabID).style.display = "none";
+			document.getElementById(nextSelectedTabID).style.display = "block";
+
+			cb = this.state.tabs[nextSelectedTabID].cb;
+			if (cb) cb();
+
+			this.setState({
+				tabs: this.state.tabs
+				, selectedTabID: nextSelectedTabID
+			});	
 		}
 	}
+	, addTab: function(anID, aLabel, aCallback) {
+		var tabs = this.state.tabs;
+
+		tabs[anID] = {
+			text: aLabel
+			, cb: aCallback
+		};
+
+		if (!this.state.selectedTabID) {
+			this.state.selectedTabID = anID;
+			document.getElementById(anID).style.display = "block";
+			if (aCallback) aCallback();
+		}
+
+		this.setState({
+			tabs: tabs
+			, selectedTabID: this.state.selectedTabID
+		});
+	}
 	, render: function() {
+		var tabs = this.state.tabs,
+			rendered;
+
+		rendered = Object.keys(tabs).map(function(tabID) {
+			return (
+				<Tab id={tabID}
+					 key={tabID}
+					 text={tabs[tabID].text}
+					 isSelected={this.state.selectedTabID === tabID ? 1 : 0}
+					 onClick={this.onTabSelected}>
+				</Tab>
+			);
+		}.bind(this));
 		return (
-			<div>
-				<Tab id="addChoices"
-					 text="Add Choices"
-					 selectedTab={this.state.selectedTab}
-					 onClick={this.onTabSelected}>
-				</Tab>
-				<Tab id="vote"
-					 text="Vote"
-					 selectedTab={this.state.selectedTab}
-					 onClick={this.onTabSelected}>
-				</Tab>
-			</div>
+			<div>{rendered}</div>
 		);
 	}
 });
-React.render(
+var topMenu = React.render(
 	<Menu />,
 	document.getElementById("menu")
 );

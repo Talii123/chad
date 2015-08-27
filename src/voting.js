@@ -162,7 +162,7 @@ VoteTabulator = React.createClass({
 		return (
 			<div>
 				<VoteErrorDisplay errorMsg={this.state.errorMsg} />
-				<VoteAdder onVote={this.countVote} />
+				<VoteAdder ref="adder" onVote={this.countVote} />
 				<VoteTable ballotOptions={this.state.ballotOptions} votesCounted={this.state.votesCounted} />
 			</div>
 		);
@@ -175,3 +175,7 @@ voteTabulator = React.render(
 );
 
 choiceUI.addListener(voteTabulator);
+
+topMenu.addTab("voteContent", "Vote", function() {
+	voteTabulator.refs.adder.refs.ballotBox.getDOMNode().focus();
+});
