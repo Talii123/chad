@@ -123,6 +123,7 @@ VoteTabulator = React.createClass({
 	, countVote: function(voteID) {
 		var index
 			, newIndex
+			, newCount
 			, chosenOption
 			, options = this.state.ballotOptions;
 
@@ -133,9 +134,9 @@ VoteTabulator = React.createClass({
 		});
 
 		chosenOption = options[index];
-		++chosenOption.count;
+		newCount = ++chosenOption.count;
 		for (newIndex = index; newIndex > 0; --newIndex) {
-			if (options[newIndex-1].count > options[newIndex].count) {
+			if (options[newIndex-1].count > newCount) {
 				break;
 			}
 		}
