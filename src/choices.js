@@ -19,51 +19,36 @@ var ChoiceList = React.createClass({
 
 var ChoiceUI = React.createClass({
 	getInitialState: function() {
-		this.listeners = [];
-		return {"choices": this.props.choices};
+		return { 'choices' : [] };
 	}
-	, addChoice: function() {
+	, onNewChoice: function() {
 		var choices = this.state.choices
 			, choiceText = this.refs.choiceText.getDOMNode()
 			, newChoice = choiceText.value;
 
 		choices.push(newChoice);
-		this.setState({"choices" : choices});
 
 		choiceText.value = '';
 		choiceText.focus();
 
-		this.onNewOptions([newChoice]);
+		this.setState({'choices' : choices});
+		this.props.onNewChoice(newChoice);
 	}
 	, handleKeyPress: function(e) {
 		if (e.keyCode == 13) { // user hit 'Enter'
-			this.addChoice();
+			this.onNewChoice();
 		}
 	}
-	, addListener: function(aListener) {
-		this.listeners.push(aListener);
-	}
-	, onNewOptions: function(newOptions) {
-		this.listeners.forEach(function(listener) {
-			listener.onNewOptions(newOptions);
-		});
+	, onShow: function() {
+		this.refs.choiceText.getDOMNode().focus();
 	}
 	, render: function() {
 		return (
-			<div className="choiceUI">
-				<ChoiceList choices={this.state.choices} onChoiceAdded={this.addChoice} />
+			<div className="choiceUI container" id="addChoicesContent">
+				<ChoiceList choices={this.state.choices} />
 				<input onKeyUp={this.handleKeyPress} type="text" ref="choiceText" />
 				<button onClick={this.addChoice}>Add</button>
 			</div>
 		);
 	}
-});
-
-choiceUI = React.render(
-	<ChoiceUI choices={CHOICES} />,
-	document.getElementById('addChoicesContent')
-);
-
-topMenu.addTab("addChoicesContent", "Add Choices", function() {
-	choiceUI.refs.choiceText.getDOMNode().focus();
 });

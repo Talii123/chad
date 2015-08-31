@@ -13,67 +13,41 @@ var Tab = React.createClass({
 });
 var Menu = React.createClass({
 	getInitialState: function() {
-		return {
-			tabs: {}
-			, selectedTabID: null
-		};
+		return { selectedTabID: this.props.selectedTabID };
+	}
+	, componentDidMount: function() {
+		document.getElementById(this.state.selectedTabID).style.display = 'block';
 	}
 	, onTabSelected: function(nextSelectedTabID) {
 		var currentTabID = this.state.selectedTabID
+			, containerRef
 			, cb;
 
 		if (nextSelectedTabID !== currentTabID) {
 			document.getElementById(currentTabID).style.display = "none";
 			document.getElementById(nextSelectedTabID).style.display = "block";
 
-			cb = this.state.tabs[nextSelectedTabID].cb;
+			containerRef = this.props.tabs[nextSelectedTabID].containerRef;
+			cb = this.props.getContainers()[containerRef].onShow;
 			if (cb) cb();
 
-			this.setState({
-				tabs: this.state.tabs
-				, selectedTabID: nextSelectedTabID
-			});	
+			this.setState({ selectedTabID: nextSelectedTabID });
 		}
-	}
-	, addTab: function(anID, aLabel, aCallback) {
-		var tabs = this.state.tabs;
-
-		tabs[anID] = {
-			text: aLabel
-			, cb: aCallback
-		};
-
-		if (!this.state.selectedTabID) {
-			this.state.selectedTabID = anID;
-			document.getElementById(anID).style.display = "block";
-			if (aCallback) aCallback();
-		}
-
-		this.setState({
-			tabs: tabs
-			, selectedTabID: this.state.selectedTabID
-		});
 	}
 	, render: function() {
-		var tabs = this.state.tabs,
-			rendered;
-
-		rendered = Object.keys(tabs).map(function(tabID) {
+		var rendered = Object.keys(this.props.tabs).map(function(tabID) {
+			var tab = this.props.tabs[tabID];
 			return (
 				<Tab id={tabID}
 					 key={tabID}
-					 text={tabs[tabID].text}
+					 text={tab.label}
 					 isSelected={this.state.selectedTabID === tabID ? 1 : 0}
 					 onClick={this.onTabSelected}>
 				</Tab>
 			);
 		}.bind(this));
 		return (
-			<div>{rendered}</div>
+			<div id="menu" className="topMenu">{rendered}</div>
 		);
 	}
 });
-var topMenu = React.render(
-	<Menu />,
-	document.getElementById("menu")
-);

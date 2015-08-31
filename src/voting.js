@@ -84,7 +84,7 @@ VoteErrorDisplay = React.createClass({
 VoteTabulator = React.createClass({
 	getInitialState: function() {
 		return {
-			ballotOptions: this.choicesToBallotOptions(this.props.choices)
+			ballotOptions: []
 			, votesCounted: 0
 			, errorMsg: ''
 		};
@@ -158,24 +158,16 @@ VoteTabulator = React.createClass({
 			, errorMsg: ''
 		});
 	}
+	, onShow: function() {
+		this.refs.adder.refs.ballotBox.getDOMNode().focus();
+	} 
 	, render: function() {
 		return (
-			<div>
+			<div id="voteContent" className="container">
 				<VoteErrorDisplay errorMsg={this.state.errorMsg} />
 				<VoteAdder ref="adder" onVote={this.countVote} />
 				<VoteTable ballotOptions={this.state.ballotOptions} votesCounted={this.state.votesCounted} />
 			</div>
 		);
 	}
-});
-
-voteTabulator = React.render(
-	<VoteTabulator choices={CHOICES} />,
-	document.getElementById('voteContent')
-);
-
-choiceUI.addListener(voteTabulator);
-
-topMenu.addTab("voteContent", "Vote", function() {
-	voteTabulator.refs.adder.refs.ballotBox.getDOMNode().focus();
 });
